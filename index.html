@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swap Token</title>
+    <script src="./src/js/jquery.min.js"></script>
+    <script src="./src/js/web3.min.js"></script>
+    <script src="./src/js/truffle-contract.js"></script>
+    <script src="./src/js/swap_demo.js"></script>
+    <!-- <script src="./src/js/swap_demo_testnet.js"></script> -->
+    <link href="./src/css/app.css" rel="stylesheet">
+    <script src="./src/js/bignumber.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container pt-3 my-3 border">
+    <div id="send_div" class="row" style="padding-left:20%;padding-right: 20%;padding-top:5%">
+      <div id="_title" class="row">
+        <div class="col-md-3">
+          <h4><B>Swap Token</B></h4>
+        </div>
+        <div class="col-md-8" style="padding-top:10px">
+          <b id="accountText" style="display:none">Account: </b><h5 id="connectedAccountAddress" style="display:inline"></h5>
+        </div>
+        <div class="col-md-1">
+          <div class="row" style="float: right;">
+            <button id="connect" class="btn btn-link" onclick=App._init()>Connect</button>
+          </div>  
+        </div>
+      </div>
+      <div id="_content" class="row pt-2" style="border:1px;border-color: darkgrey;border-style: solid; padding:35px">
+        <!-- <div id="balancInfo">
+          <div class="col-md-6">
+            <b>Gas Price: </b><h5 id="gasPrice" style="display: inline;">0</h5>
+           </div>
+          <div class="col-md-6 text-right">
+           <b>WalletBalance: </b><h5 id="walletBalance" style="display: inline;">0</h5>
+          </div>
+        </div>
+        <hr> -->
+        <form id="form_swap">
+          <div>
+            <label for="fromToken">From Token:</label>
+            <input type="text" id="fromToken" class="form-control" placeholder="Enter token symbol for mainnet or token address for goerli testnet" required/>
+            <!-- <select id="fromToken" class="form-control" placeholder="Select Token" required>
+              <option value="select">-------Select-------</option>
+            </select> -->
+            <label for="toToken">To Token:</label>
+            <input type="text" id="toToken" class="form-control" placeholder="Enter token symbol for mainnet or token address for goerli testnet" required/>
+            <!-- <select id="toToken" class="form-control" placeholder="Select Token" required>
+              <option value="select">-------Select-------</option>
+            </select> -->
+            
+            <label for="amount">Amount:</label><input type="number" id="amount" class="form-control" placeholder="e.g., 1 Eth or USDT or BSC" required></input>
+            <label for="slippage">Slippage:</label><input type="range" id="slippage_percent"  min="0" max="10" step="1" value="1"></input>
+             
+            <div id="swapInfo" class="row" style="display:none;padding-top: 10px;">
+              <div class="col-md-6">
+                <h5 id="_estimateGas" style="display: none;">Estimated Gas: <b  id="estimate_gas"></b></h5>
+              </div>
+              <div class="col-md-6 text-right">
+               <h5 id="_currentPrice" style="display: none;">Current Price: <b id="currentPrice"></b></h5>
+              </div>
+            </div>
+            <hr id="hr">
+            <label for="toAddress">Receiver:</label><input type="text" id="toAddress" class="form-control" placeholder="your wallet address" required disabled></input>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-md-2 col-md-offset-1"><button class="btn btn-primary" id="estimateSwap" type="button" onclick=App._getEstimate()>Estimate </button></div>
+            <div class="col-md-2 col-md-offset-2"><button class="btn btn-primary" id="swapToken" type="button" onclick=App._swapToken()>Swap </button></div>
+            <div class="col-md-2 col-md-offset-2"><button class="btn btn-primary" id="btn_Clear" type="button" onclick=App._clear()>Reset</button></div>
+          </div>
+        </form>
+      </div>
+      <br>
+      <div id="_footer" class="hint"><strong>Hint:</strong> dapp to make token swap
+      </div>
+      <br>
+    </div>
+  </div>
+</body>
+</html>
+
