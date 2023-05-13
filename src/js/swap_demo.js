@@ -424,14 +424,14 @@ App = {
 
     const tokenContract= web3.eth.contract(erc20).at(_fromTokenAddress)
     try{
-        await tokenContract.approve(_allowanceTarget,_maxApproval,{from:_taker,gas:"15000000"},async (err,txId)=>{
+        await tokenContract.approve(_allowanceTarget,_maxApproval,async (err,txId)=>{
             console.log(txId)
             if(txId!=undefined)
             {
                 // await web3.eth.getTransactionReceipt(txId,async (err,txReceipt)=>{
                 //     console.log(txReceipt)
                 //     if(txReceipt){
-                        await web3.eth.sendTransaction(response,{from:_taker,value:response.sellAmount,gas:'500000'},async(err,swapTxId)=>{//getting error while swapping   ,maxFeePerGas:web3.toWei('5','Gwei'),maxPriorityFeePerGas:web3.toWei('1.5',"Gwei")
+                        await web3.eth.sendTransaction(response,async(err,swapTxId)=>{ //gas:"0x40b28", gasPrice:"0x5f5e100"
                             console.log(swapTxId)
                             if(swapTxId!=undefined){
                                 alert("Swap Token Transaction Done!!! Wait a While & Check you balance..")
