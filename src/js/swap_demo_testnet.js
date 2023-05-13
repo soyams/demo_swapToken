@@ -40,12 +40,15 @@ _getEstimate=async function(){
         console.log(_response)
         alert("Estimate Exchange Values fetched!! Go for Swap..")
         document.getElementById('swapToken').disabled=false
+        document.getElementById('expected_amount').value=(_response.buyAmount)/(10**18)
         document.getElementById('swapInfo').style.display="block"
         document.getElementById('_estimateGas').style.display="block"
         document.getElementById('estimate_gas').innerHTML=_response.estimatedGas;
         document.getElementById('_currentPrice').style.display="block"
         document.getElementById('currentPrice').innerHTML=_response.price;
-        document.getElementById('hr').style.marginTop="10px";
+        document.getElementById('hr_1').style.display="block";
+        document.getElementById('hr_1').style.marginBottom="0px";
+        document.getElementById('hr_2').style.marginTop="10px";
     }).catch(err=>{
         console.log(err)
     })
@@ -329,7 +332,7 @@ _swapApproval=async function(response){
             //    const txReceipt= await web3.eth.getTransactionReceipt(txId,async (err,txReceipt)=>{
             //         console.log(txReceipt)
             //         if(txReceipt){
-                        await web3.eth.sendTransaction(response,{from:response.from,value:response.sellAmount,gas:'1500000'},async(err,swapTxId)=>{//getting error while swapping again
+                        await web3.eth.sendTransaction(response,async(err,swapTxId)=>{//,{from:response.from,value:response.sellAmount,gas:'1500000'}
                             console.log(swapTxId)//add event for receipt
                             if(swapTxId!=undefined){
                                 alert("Swap Token Transaction Done!!! Wait a While & Check you balance..")
@@ -368,11 +371,12 @@ _swapApproval=async function(response){
 },
 
 _clear=function(){
-   document.getElementById('fromToken').value=""
-   document.getElementById('toToken').value=""
-   document.getElementById('amount').value=""
-   document.getElementById('slippage_percent').value="1"
-   document.getElementById('toAddress').value=""
-   document.getElementById('estimate_gas').innerHTML=0;
-   document.getElementById('currentPrice').innerHTML=0
+    document.getElementById('fromToken').value=""
+  document.getElementById('toToken').value=""
+  document.getElementById('amount').value=""
+  document.getElementById('expected_amount').value=""
+  document.getElementById('slippage_percent').value="1"
+//   document.getElementById('toAddress').value=""
+  document.getElementById('estimate_gas').innerHTML=0;
+  document.getElementById('currentPrice').innerHTML=0
 }

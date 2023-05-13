@@ -96,100 +96,116 @@ App = {
 
   },
   _getEstimate:async function(){
+    if(document.getElementById('connect').innerHTML=='connected')
+    {
+        _fromToken=document.getElementById('fromToken').value;
+        _toToken=document.getElementById('toToken').value;
+        _amount=document.getElementById('amount').value;
+        _amountInWei=web3.toWei(_amount,'ether')
 
-    _fromToken=document.getElementById('fromToken').value;
-    _toToken=document.getElementById('toToken').value;
-    _amount=document.getElementById('amount').value;
-    _amountInWei=web3.toWei(_amount,'ether')
+        _slippagePercentage=(document.getElementById('slippage_percent').value)/100
+        _taker=document.getElementById('toAddress').value;
 
-    _slippagePercentage=(document.getElementById('slippage_percent').value)/100
-    _taker=document.getElementById('toAddress').value;
-
-    var chainId=await Promise.resolve(window.ethereum.request({'method':'eth_chainId'})).then(chainId=>{return chainId})
-    console.log(chainId)
-    let testnet="";
-    if(chainId!='0x1'){
-        _testnet="goerli"
-        testnet=_testnet.concat(".")
-    }
-    if(_amount>0){
-        if(_taker!=""){
-          if(_fromToken.length>0 && _toToken.length>0 && _fromToken!=_toToken)
-          {
-            var url="https://"+testnet+"api.0x.org/swap/v1/price?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker
-            
-            Promise.resolve($.get(url)).then(_response=>{
-                console.log(_response)
-                alert("Estimate Exchange Values fetched!! Go for Swap..")
-                document.getElementById('swapToken').disabled=false
-                document.getElementById('swapInfo').style.display="block"
-                document.getElementById('_estimateGas').style.display="block"
-                document.getElementById('estimate_gas').innerHTML=_response.estimatedGas;
-                document.getElementById('_currentPrice').style.display="block"
-                document.getElementById('currentPrice').innerHTML=_response.price;
-                document.getElementById('hr').style.marginTop="10px";
-            }).catch(err=>{
-            console.log(err)  
-            })
+        var chainId=await Promise.resolve(window.ethereum.request({'method':'eth_chainId'})).then(chainId=>{return chainId})
+        console.log(chainId)
+        let testnet="";
+        if(chainId!='0x1'){
+            _testnet="goerli"
+            testnet=_testnet.concat(".")
         }
-        else{
-        alert("Required detail missing.")
-        }
-    }
-    else{
-        alert("connect with wallet.")
-    }
-    }
-    else{
-        alert("amount must be greater than 0.")
-    }
-  },
- 
-  _swapToken:async function(){//api for trADING
-
-    _fromToken=document.getElementById('fromToken').value;
-    _toToken=document.getElementById('toToken').value;
-    _amount=document.getElementById('amount').value;
-    _amountInWei=web3.toWei(_amount,'ether')
-
-    _slippagePercentage=(document.getElementById('slippage_percent').value)/100//default=0.01%
-    _taker=document.getElementById('toAddress').value;
-
-    var chainId=await Promise.resolve(window.ethereum.request({'method':'eth_chainId'})).then(chainId=>{return chainId})
-
-    let testnet="";
-    let _skipValidate=false;
-    if(chainId!='0x1'){
-        _testnet="goerli"
-        testnet=_testnet.concat(".")
-        _skipValidate=true
-    }
-    if(_amount>0){
-        if(_taker!=""){
-            if(_fromToken.length>0 && _toToken.length>0 && _fromToken!=_toToken)
-            {
-                var swapUrl="https://"+testnet+"api.0x.org/swap/v1/quote?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker+"&skipValidation="+_skipValidate
-                const header={
-                        '0x-api-key':'bf3504fe-ea6b-4970-bbe0-1d0bfeb61b0d'
-                    }
-                Promise.resolve($.get(swapUrl,header)).then(async response=>{//,header
-                    console.log(response)
-                    alert("Get Exchange Quotes Details!!! Ready for Approval..")
-                    await App._swapApproval(response);
+        if(_amount>0){
+            if(_taker!=""){
+                if(_fromToken.length>0 && _toToken.length>0 && _fromToken!=_toToken)
+                {
+                var url="https://"+testnet+"api.0x.org/swap/v1/price?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker
+                
+                Promise.resolve($.get(url)).then(_response=>{
+                    console.log(_response)
+                    alert("Estimate Exchange Values fetched!! Go for Swap..")
+                    document.getElementById('swapToken').disabled=false
+                    document.getElementById('expected_amount').value=(_response.buyAmount)/(10**18)
+                    document.getElementById('swapInfo').style.display="block"
+                    document.getElementById('_estimateGas').style.display="block"
+                    document.getElementById('estimate_gas').innerHTML=_response.estimatedGas;
+                    document.getElementById('_currentPrice').style.display="block"
+                    document.getElementById('currentPrice').innerHTML=_response.price;
+                    document.getElementById('hr_1').style.display="block";
+                    document.getElementById('hr_1').style.marginBottom="0px";
+                    document.getElementById('hr_2').style.marginTop="10px";
                 }).catch(err=>{
-                    console.log(err)
+                console.log(err)  
                 })
             }
             else{
-                alert("Required detail missing.")
+            alert("Required detail missing.")
             }
         }
         else{
-            alert("connect with wallet")
+            alert("connect with wallet.")
+        }
+        }
+        else{
+            alert("amount must be greater than 0.")
         }
     }
     else{
-        alert("amount must be greater than 0.")
+        console.log("connect to wallet first.")
+        alert("connect to wallet first.")
+    }
+    
+  },
+ 
+  _swapToken:async function(){//api for trADING
+    if(document.getElementById('connect').innerHTML=='connected')
+    {
+        _fromToken=document.getElementById('fromToken').value;
+        _toToken=document.getElementById('toToken').value;
+        _amount=document.getElementById('amount').value;
+        _amountInWei=web3.toWei(_amount,'ether')
+
+        _slippagePercentage=(document.getElementById('slippage_percent').value)/100//default=0.01%
+        _taker=document.getElementById('toAddress').value;
+
+        var chainId=await Promise.resolve(window.ethereum.request({'method':'eth_chainId'})).then(chainId=>{return chainId})
+
+        let testnet="";
+        let _skipValidate=false;
+        if(chainId!='0x1'){
+            _testnet="goerli"
+            testnet=_testnet.concat(".")
+            _skipValidate=true
+        }
+        if(_amount>0){
+            if(_taker!=""){
+                if(_fromToken.length>0 && _toToken.length>0 && _fromToken!=_toToken)
+                {
+                    var swapUrl="https://"+testnet+"api.0x.org/swap/v1/quote?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker+"&skipValidation="+_skipValidate
+                    const header={
+                            '0x-api-key':'bf3504fe-ea6b-4970-bbe0-1d0bfeb61b0d'
+                        }
+                    Promise.resolve($.get(swapUrl,header)).then(async response=>{//,header
+                        console.log(response)
+                        alert("Get Exchange Quotes Details!!! Ready for Approval..")
+                        await App._swapApproval(response);
+                    }).catch(err=>{
+                        console.log(err)
+                    })
+                }
+                else{
+                    alert("Required detail missing.")
+                }
+            }
+            else{
+                alert("connect with wallet")
+            }
+        }
+        else{
+            alert("amount must be greater than 0.")
+        }
+    }
+    else{
+        console.log("connect to wallet first.")
+        alert("connect to wallet first.")
     }
   },
   _swapApproval:async function(response){
@@ -197,7 +213,7 @@ App = {
     const _fromTokenAddress=response.sellTokenAddress
     const _maxApproval=response.sellAmount
     const _allowanceTarget=response.allowanceTarget
-    const _taker=response.from
+    // const _taker=response.from
 
     const erc20=[
         {
@@ -472,8 +488,9 @@ _clear:function(){
   document.getElementById('fromToken').value=""
   document.getElementById('toToken').value=""
   document.getElementById('amount').value=""
+  document.getElementById('expected_amount').value=""
   document.getElementById('slippage_percent').value="1"
-  document.getElementById('toAddress').value=""
+//   document.getElementById('toAddress').value=""
   document.getElementById('estimate_gas').innerHTML=0;
   document.getElementById('currentPrice').innerHTML=0
 }
