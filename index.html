@@ -31,14 +31,24 @@
         </div>
       </div>
       <div id="_content" class="row pt-2" style="border:1px;border-color: darkgrey;border-style: solid; padding:35px">
+        <div id="balancInfo" class="row">
+          <div class="col-md-6">
+           <h5>WalletBalance: <b id="walletBalance" style="display: inline;">0</b></h5>
+          </div>
+        </div>
+        <hr style="margin-top: 5px;">
         <div id="form_swap">
           <div class="row">
             <div class="col-md-7">
               <label for="fromToken">From Token:</label>
-              <input type="text" id="fromToken" class="form-control" placeholder="token symbol for mainnet/token address for goerli testnet" required/>
-              <!-- <select id="fromToken" class="form-control" placeholder="Select Token" required>
-                <option value="select">-------Select-------</option>
-              </select> -->
+              <div id="testnet_div_fromToken" style="display:block">
+                <input type="text" id="fromToken" class="form-control" placeholder="token symbol for mainnet/token address for goerli testnet" required/>
+              </div>
+              <div id="mainnet_div_fromToken" style="display:none">
+                <select id="selectFromToken" class="form-control" placeholder="Select Token Symbol" required>
+                  <option value="select">-------Select -------</option>
+                </select>
+              </div>
             </div>
             <div class="col-md-5">
               <label for="amount">Amount:</label>
@@ -49,10 +59,14 @@
           <div class="row">
             <div class="col-md-7">
               <label for="toToken">To Token:</label>
-              <input type="text" id="toToken" class="form-control" placeholder="token symbol for mainnet/token address for goerli testnet" required/>
-              <!-- <select id="toToken" class="form-control" placeholder="Select Token" required>
+              <div id="testnet_div_toToken" style="display:block">
+                <input type="text" id="toToken" class="form-control" placeholder="token symbol for mainnet/token address for goerli testnet" required/>
+              </div>
+              <div id="mainnet_div_toToken" style="display:none">
+                <select id="selectToToken" class="form-control" placeholder="Select Token Symbol" required>
                   <option value="select">-------Select-------</option>
-              </select> -->
+                </select>
+              </div>
             </div>
             <div class="col-md-5">
               <label for="expected_amount">Expected:</label>

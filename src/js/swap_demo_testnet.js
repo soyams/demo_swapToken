@@ -4,14 +4,15 @@ let web3;
 _init=function(){
     if(typeof window.ethereum!="undefined"){
         web3=new Web3(window.ethereum)
-        window.ethereum.request({'method':'eth_requestAccounts'}).then(_account=>{
-
-            web3.eth.defaultAccount=_account
-            document.getElementById("accountText").style.display="block";
-            document.getElementById('connectedAccountAddress').innerHTML=web3.eth.defaultAccount;
-            document.getElementById('connect').innerHTML="connected";
-            document.getElementById('toAddress').value=web3.eth.defaultAccount;
-        })
+        try{
+            window.ethereum.request({'method':'eth_requestAccounts'}).then(_account=>{
+                web3.eth.defaultAccount=_account
+            })
+        }
+        catch(err){
+            console.log(err);
+            alert('No selected account found..User rejected the request')
+        }
     }
     else if(window.web3){
         web3=new Web3(window.web3)
@@ -19,8 +20,37 @@ _init=function(){
     else{
         console.log("install metamask")
     }
-},
 
+    window.ethereum.on('chainChanged',(_chainId)=>{
+        this._clear();
+        this._getAccount();
+    })
+    window.ethereum.on('accountsChanged',(_account)=>{
+        this._clear();
+        this._getAccount();
+    })
+    this._getAccount();
+},
+_getAccount=async function(){
+    await window.ethereum.request({'method':'eth_accounts'}).then(async _acc=>{
+        console.log(_acc)
+        web3.eth.defaultAccount=_acc[0]
+        await window.ethereum.request({'method':'eth_chainId'}).then(_id=>{
+            alert("Connected Chain Id: "+_id+" & Connected Account: "+web3.eth.defaultAccount)
+        })
+    })
+    this._getAccountInfo();
+},
+_getAccountInfo=async ()=>{
+    document.getElementById("accountText").style.display="block";
+    document.getElementById('connectedAccountAddress').innerHTML=web3.eth.defaultAccount;
+    document.getElementById('connect').innerHTML="connected";
+    document.getElementById('toAddress').value=web3.eth.defaultAccount;
+    await web3.eth.getBalance(web3.eth.defaultAccount,(err,currentBalance)=>{
+        console.log(currentBalance)
+        document.getElementById("walletBalance").innerHTML=web3.fromWei(JSON.parse(currentBalance),'ether')+'Eth'
+      })
+}
 _getEstimate=async function(){
 
     _fromToken=document.getElementById('fromToken').value;
@@ -51,6 +81,7 @@ _getEstimate=async function(){
         document.getElementById('hr_2').style.marginTop="10px";
     }).catch(err=>{
         console.log(err)
+        alert("status: "+err.status+" , Message: "+err.statusText+" & Error: "+err.responseJSON.reason)
     })
    }
    else{
@@ -85,6 +116,7 @@ _swapToken=async function(){
             await _swapApproval(response);
         }).catch(err=>{
             console.log(err)
+            alert("status: "+err.status+" , Message: "+err.statusText+" & Error: "+err.responseJSON.values.message)
         })
     }
     else{
@@ -379,4 +411,5 @@ _clear=function(){
 //   document.getElementById('toAddress').value=""
   document.getElementById('estimate_gas').innerHTML=0;
   document.getElementById('currentPrice').innerHTML=0
+  document.getElementById('swapToken').disabled=true
 }
