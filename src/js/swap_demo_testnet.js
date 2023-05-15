@@ -403,13 +403,17 @@ _swapApproval=async function(response){
 },
 
 _clear=function(){
+    document.getElementById('_fromToken').value=""
+    document.getElementById('_toToken').value=""
     document.getElementById('fromToken').value=""
-  document.getElementById('toToken').value=""
-  document.getElementById('amount').value=""
-  document.getElementById('expected_amount').value=""
-  document.getElementById('slippage_percent').value="1"
+    document.getElementById('toToken').value=""
+    document.getElementById('amount').value=""
+    document.getElementById('expected_amount').value=""
+    document.getElementById('slippage_percent').value="1"
 //   document.getElementById('toAddress').value=""
-  document.getElementById('estimate_gas').innerHTML=0;
-  document.getElementById('currentPrice').innerHTML=0
-  document.getElementById('swapToken').disabled=true
+    document.getElementById('estimate_gas').innerHTML=0;
+    document.getElementById('currentPrice').innerHTML=0
+    document.getElementById('swapToken').disabled=true
+    document.getElementById('selectFromToken').value="select"
+    document.getElementById('selectToToken').value="select"
 }

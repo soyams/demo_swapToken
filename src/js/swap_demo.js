@@ -70,6 +70,8 @@ App = {
       document.getElementById('mainnet_div_toToken').style.display='block';
       document.getElementById('testnet_div_fromToken').style.display='none';
       document.getElementById('testnet_div_toToken').style.display='none';
+      document.getElementById('testnet__fromToken').style.display='none';
+      document.getElementById('testnet__toToken').style.display='none';
 
       var url="https://tokens.coingecko.com/uniswap/all.json"
       $.get(url).then(res=>{
@@ -77,12 +79,21 @@ App = {
         this._addList(res.tokens);
       })
     }
-    else{
+    else if(chainId=='0x5'){
       document.getElementById('mainnet_div_fromToken').style.display='none';
       document.getElementById('mainnet_div_toToken').style.display='none';
       document.getElementById('testnet_div_fromToken').style.display='block';
       document.getElementById('testnet_div_toToken').style.display='block';
-
+      document.getElementById('testnet__fromToken').style.display='none';
+      document.getElementById('testnet__toToken').style.display='none';
+    }
+    else{
+        document.getElementById('mainnet_div_fromToken').style.display='none';
+        document.getElementById('mainnet_div_toToken').style.display='none';
+        document.getElementById('testnet_div_fromToken').style.display='none';
+        document.getElementById('testnet_div_toToken').style.display='none';
+        document.getElementById('testnet__fromToken').style.display='block';
+        document.getElementById('testnet__toToken').style.display='block';
     }
   },
   _addList:function (tokenList) { //working
@@ -140,9 +151,13 @@ App = {
             _fromToken=document.getElementById('selectFromToken').value
             _toToken=document.getElementById('selectToToken').value
         }
-        else{
+        else if(chainId=='0x5'){
             _fromToken=document.getElementById('fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
             _toToken=document.getElementById('toToken').value;//0x07865c6E87B9F70255377e024ace6630C1Eaa37F - USDC
+        }
+        else{
+            _fromToken=document.getElementById('_fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
+            _toToken=document.getElementById('_toToken').value;//0x07865c6E87B9F70255377e024ace6630C1Eaa37F - USDC
         }
         
         _amount=document.getElementById('amount').value;
@@ -160,27 +175,34 @@ App = {
         }
         if(_amount>0){
             if(_taker!=""){
-                if(_fromToken.length>0 && _toToken.length>0 && _fromToken!=_toToken && _fromToken!="select" && _toToken!="select")
+                if(_fromToken.length>0 && _toToken.length>0 && _fromToken!="select" && _toToken!="select")
                 {
-                var url="https://"+testnet+"api.0x.org/swap/v1/price?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker
+                    if(_fromToken!=_toToken)
+                    {
+                        var url="https://"+testnet+"api.0x.org/swap/v1/price?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker
                 
-                Promise.resolve($.get(url)).then(_response=>{
-                    console.log(_response)
-                    alert("Estimate Exchange Values fetched!! Go for Swap..")
-                    document.getElementById('swapToken').disabled=false
-                    document.getElementById('expected_amount').value=_response.buyAmount
-                    document.getElementById('swapInfo').style.display="block"
-                    document.getElementById('_estimateGas').style.display="block"
-                    document.getElementById('estimate_gas').innerHTML=_response.estimatedGas;
-                    document.getElementById('_currentPrice').style.display="block"
-                    document.getElementById('currentPrice').innerHTML=_response.price;
-                    document.getElementById('hr_1').style.display="block";
-                    document.getElementById('hr_1').style.marginBottom="0px";
-                    document.getElementById('hr_2').style.marginTop="10px";
-                }).catch(err=>{
-                    console.log(err)  
-                    alert("status: "+err.status+" , Message: "+err.statusText+" & Error: "+err.responseJSON.reason)
-                })
+                        Promise.resolve($.get(url)).then(_response=>{
+                            console.log(_response)
+                            alert("Estimate Exchange Values fetched!! Go for Swap..")
+                            document.getElementById('swapToken').disabled=false
+                            document.getElementById('expected_amount').value=_response.buyAmount
+                            document.getElementById('swapInfo').style.display="block"
+                            document.getElementById('_estimateGas').style.display="block"
+                            document.getElementById('estimate_gas').innerHTML=_response.estimatedGas;
+                            document.getElementById('_currentPrice').style.display="block"
+                            document.getElementById('currentPrice').innerHTML=_response.price;
+                            document.getElementById('hr_1').style.display="block";
+                            document.getElementById('hr_1').style.marginBottom="0px";
+                            document.getElementById('hr_2').style.marginTop="10px";
+                        }).catch(err=>{
+                            console.log(err)  
+                            alert("status: "+err.status+" , Message: "+err.statusText+" & Error: "+err.responseJSON.reason)
+                        })
+                    }
+                    else{
+                        alert("Sell token & Buy token must be different")
+                    }
+                    
             }
             else{
             alert("Required detail missing.")
@@ -212,9 +234,13 @@ App = {
             _fromToken=document.getElementById('selectFromToken').value
             _toToken=document.getElementById('selectToToken').value
         }
-        else{
+        else if(chainId=='0x5'){
             _fromToken=document.getElementById('fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
             _toToken=document.getElementById('toToken').value;//0x07865c6E87B9F70255377e024ace6630C1Eaa37F - USDC
+        }
+        else{
+            _fromToken=document.getElementById('_fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
+            _toToken=document.getElementById('_toToken').value;//0x07865c6E87B9F70255377e024ace6630C1Eaa37F - USDC
         }
 
         _amount=document.getElementById('amount').value;
@@ -234,20 +260,26 @@ App = {
         }
         if(_amount>0){
             if(_taker!=""){
-                if(_fromToken.length>0 && _toToken.length>0 && _fromToken!=_toToken && _fromToken!="select" && _toToken!="select")
+                if(_fromToken.length>0 && _toToken.length>0 && _fromToken!="select" && _toToken!="select")
                 {
-                    var swapUrl="https://"+testnet+"api.0x.org/swap/v1/quote?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker+"&skipValidation="+_skipValidate
-                    const header={
-                            '0x-api-key':'bf3504fe-ea6b-4970-bbe0-1d0bfeb61b0d'
-                        }
-                    Promise.resolve($.get(swapUrl,header)).then(async response=>{//,header
-                        console.log(response)
-                        alert("Get Exchange Quotes Details!!! Ready for Approval..")
-                        await App._swapApproval(response);
-                    }).catch(err=>{
-                        console.log(err)
-                        alert("status: "+err.status+" , Message: "+err.statusText+" & Error: "+err.responseJSON.reason)
-                    })
+                    if(_fromToken!=_toToken){
+                        var swapUrl="https://"+testnet+"api.0x.org/swap/v1/quote?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker+"&skipValidation="+_skipValidate
+                        const header={
+                                '0x-api-key':'bf3504fe-ea6b-4970-bbe0-1d0bfeb61b0d'
+                            }
+                        Promise.resolve($.get(swapUrl,header)).then(async response=>{//,header
+                            console.log(response)
+                            alert("Get Exchange Quotes Details!!! Ready for Approval..")
+                            await App._swapApproval(response);
+                        }).catch(err=>{
+                            console.log(err)
+                            alert("status: "+err.status+" , Message: "+err.statusText+" & Error: "+err.responseJSON.reason)
+                        })
+                    }
+                    else{
+                        alert("Sell token & Buy token must be different")
+                    }
+                    
                 }
                 else{
                     alert("Required detail missing.")
@@ -271,7 +303,7 @@ App = {
     const _fromTokenAddress=response.sellTokenAddress
     const _maxApproval=response.sellAmount
     const _allowanceTarget=response.allowanceTarget
-    // const _taker=response.from
+    const _taker=response.from
 
     const erc20=[
         {
@@ -505,7 +537,7 @@ App = {
                 // await web3.eth.getTransactionReceipt(txId,async (err,txReceipt)=>{
                 //     console.log(txReceipt)
                 //     if(txReceipt){
-                        await web3.eth.sendTransaction(response,async(err,swapTxId)=>{ //gas:"0x40b28", gasPrice:"0x5f5e100"
+                        await web3.eth.sendTransaction(response,{from:_taker,gas:'1000000000000000'},async(err,swapTxId)=>{ //gas:"0x40b28", gasPrice:"0x5f5e100"
                             console.log(swapTxId)
                             if(swapTxId!=undefined && !err){
                                 alert("Swap Token Transaction Done!!! Wait a While & Check you balance..")
@@ -543,17 +575,20 @@ App = {
 },
  
 _clear:function(){
-  document.getElementById('fromToken').value=""
-  document.getElementById('toToken').value=""
-  document.getElementById('amount').value=""
-  document.getElementById('expected_amount').value=""
-  document.getElementById('slippage_percent').value="1"
+
+    document.getElementById('_fromToken').value=""
+    document.getElementById('_toToken').value=""
+    document.getElementById('fromToken').value="select"
+    document.getElementById('toToken').value="select"
+    document.getElementById('amount').value=""
+    document.getElementById('expected_amount').value=""
+    document.getElementById('slippage_percent').value="1"
 //   document.getElementById('toAddress').value=""
-  document.getElementById('estimate_gas').innerHTML=0;
-  document.getElementById('currentPrice').innerHTML=0
-  document.getElementById('swapToken').disabled=true
-  document.getElementById('selectFromToken').value="select"
-  document.getElementById('selectToToken').value="select"
+    document.getElementById('estimate_gas').innerHTML=0;
+    document.getElementById('currentPrice').innerHTML=0
+    document.getElementById('swapToken').disabled=true
+    document.getElementById('selectFromToken').value="select"
+    document.getElementById('selectToToken').value="select"
 }
 
 };
