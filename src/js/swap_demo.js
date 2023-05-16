@@ -169,6 +169,7 @@ App = {
             _fromToken=document.getElementById('fromToken').value;// WETH
             _toToken=document.getElementById('toToken').value;//DAI
             _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
+            _tokenSymbolTo=document.getElementById('toToken').options[document.getElementById('toToken').selectedIndex].text
             _decimalVal=18;
             for(i=0;i<_list.length;i++){
                 if(_tokenSymbol==_list[i].symbol){
@@ -176,7 +177,14 @@ App = {
                     break;
                 }
             }
-        }
+            _decimalValTo=18;
+            for(i=0;i<_list.length;i++){
+                if(_tokenSymbolTo==_list[i].symbol){
+                    _decimalValTo=_list[i].decimals
+                    break;
+                }
+            }
+         }
         else{
             _fromToken=document.getElementById('_fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
             _toToken=document.getElementById('_toToken').value;//0x07865c6E87B9F70255377e024ace6630C1Eaa37F - USDC
@@ -208,7 +216,7 @@ App = {
                             console.log(_response)
                             alert("Estimate Exchange Values fetched!! Go for Swap..")
                             document.getElementById('swapToken').disabled=false
-                            document.getElementById('expected_amount').value=_response.buyAmount
+                            document.getElementById('expected_amount').value=(_response.buyAmount/(10**_decimalValTo))//or _response.buyAmount*_response.price
                             document.getElementById('swapInfo').style.display="block"
                             document.getElementById('_estimateGas').style.display="block"
                             document.getElementById('estimate_gas').innerHTML=_response.estimatedGas;

@@ -82,7 +82,7 @@ _getEstimate=async function(){
         console.log(_response)
         alert("Estimate Exchange Values fetched!! Go for Swap..")
         document.getElementById('swapToken').disabled=false
-        document.getElementById('expected_amount').value=(_response.buyAmount)/(10**18)
+        document.getElementById('expected_amount').value=_response.buyAmount*_response.price//(_response.buyAmount)/(10**_decimalValTo)
         document.getElementById('swapInfo').style.display="block"
         document.getElementById('_estimateGas').style.display="block"
         document.getElementById('estimate_gas').innerHTML=_response.estimatedGas;
