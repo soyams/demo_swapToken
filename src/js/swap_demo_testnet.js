@@ -51,23 +51,23 @@ _getAccountInfo=async ()=>{
         console.log(currentBalance)
         document.getElementById("walletBalance").innerHTML=web3.fromWei(JSON.parse(currentBalance),'ether')+'Eth'
       })
-    // _list=await $.get("https://tokens.coingecko.com/uniswap/all.json").then(_res=>{
-    //     return _res.tokens;
-    // })
+    _list=await $.get("https://tokens.coingecko.com/uniswap/all.json").then(_res=>{
+        return _res.tokens;
+    })
 }
 _getEstimate=async function(){
 
     _fromToken=document.getElementById('fromToken').value;
     _toToken=document.getElementById('toToken').value;
-    // _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
+     _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
     _amount=document.getElementById('amount').value;
     _decimalVal=18;
-    // for(i=0;i<_list.length;i++){
-    //     if(_tokenSymbol==_list[i].symbol){
-    //         _decimalVal=_list[i].decimals
-    //         break;
-    //     }
-    // }
+    for(i=0;i<_list.length;i++){
+        if(_tokenSymbol==_list[i].symbol){
+            _decimalVal=_list[i].decimals
+            break;
+        }
+    }
     _amountInWei=_amount*(10**(_decimalVal))
     
     _slippagePercentage=(document.getElementById('slippage_percent').value)/100//default=0.01%
@@ -109,16 +109,16 @@ _swapToken=async function(){
 
     _fromToken=document.getElementById('fromToken').value;//DAI
     _toToken=document.getElementById('toToken').value;//WETH
-    // _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
+    _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
     
     _amount=document.getElementById('amount').value;//in ether    
     _decimalVal=18;
-    // for(i=0;i<_list.length;i++){
-    //     if(_tokenSymbol==_list[i].symbol){
-    //         _decimalVal=_list[i].decimals
-    //         break;
-    //     }
-    // }
+    for(i=0;i<_list.length;i++){
+        if(_tokenSymbol==_list[i].symbol){
+            _decimalVal=_list[i].decimals
+            break;
+        }
+    }
     _amountInWei=_amount*(10**(_decimalVal))
 
     _slippagePercentage=(document.getElementById('slippage_percent').value)/100//default=0.01%

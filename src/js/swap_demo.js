@@ -81,12 +81,15 @@ App = {
       })
     }
     else if(chainId=='0x5'){
-      document.getElementById('mainnet_div_fromToken').style.display='none';
-      document.getElementById('mainnet_div_toToken').style.display='none';
-      document.getElementById('testnet_div_fromToken').style.display='block';
-      document.getElementById('testnet_div_toToken').style.display='block';
-      document.getElementById('testnet__fromToken').style.display='none';
-      document.getElementById('testnet__toToken').style.display='none';
+        document.getElementById('mainnet_div_fromToken').style.display='none';
+        document.getElementById('mainnet_div_toToken').style.display='none';
+        document.getElementById('testnet_div_fromToken').style.display='block';
+        document.getElementById('testnet_div_toToken').style.display='block';
+        document.getElementById('testnet__fromToken').style.display='none';
+        document.getElementById('testnet__toToken').style.display='none';
+        _list=await $.get("https://tokens.coingecko.com/uniswap/all.json").then(_res=>{
+        return _res.tokens;
+        })
 
     }
     else{
@@ -96,6 +99,8 @@ App = {
         document.getElementById('testnet_div_toToken').style.display='none';
         document.getElementById('testnet__fromToken').style.display='block';
         document.getElementById('testnet__toToken').style.display='block';
+        // document.getElementById('estimateSwap').disabled=true;
+        // document.getElementById('amount').disabled=true;
     }
   },
   _addList:function (tokenList) { //working
@@ -163,8 +168,14 @@ App = {
         else if(chainId=='0x5'){
             _fromToken=document.getElementById('fromToken').value;// WETH
             _toToken=document.getElementById('toToken').value;//DAI
-            // _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
+            _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
             _decimalVal=18;
+            for(i=0;i<_list.length;i++){
+                if(_tokenSymbol==_list[i].symbol){
+                    _decimalVal=_list[i].decimals
+                    break;
+                }
+            }
         }
         else{
             _fromToken=document.getElementById('_fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
@@ -173,6 +184,7 @@ App = {
         
         _amount=document.getElementById('amount').value;
         _amountInWei=_amount*(10**(_decimalVal))
+
 
         _slippagePercentage=(document.getElementById('slippage_percent').value)/100
         _taker=document.getElementById('toAddress').value;
@@ -254,8 +266,14 @@ App = {
         else if(chainId=='0x5'){
             _fromToken=document.getElementById('fromToken').value;// WETH
             _toToken=document.getElementById('toToken').value;// USDC
-            // _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
+            _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
             _decimalVal=18;
+            for(i=0;i<_list.length;i++){
+                if(_tokenSymbol==_list[i].symbol){
+                    _decimalVal=_list[i].decimals
+                    break;
+                }
+            }
         }
         else{
             _fromToken=document.getElementById('_fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
