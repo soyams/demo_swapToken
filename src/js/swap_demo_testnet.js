@@ -42,6 +42,7 @@ _getAccount=async function(){
     this._getAccountInfo();
 },
 _getAccountInfo=async ()=>{
+
     document.getElementById("accountText").style.display="block";
     document.getElementById('connectedAccountAddress').innerHTML=web3.eth.defaultAccount;
     document.getElementById('connect').innerHTML="connected";
@@ -50,19 +51,30 @@ _getAccountInfo=async ()=>{
         console.log(currentBalance)
         document.getElementById("walletBalance").innerHTML=web3.fromWei(JSON.parse(currentBalance),'ether')+'Eth'
       })
+    // _list=await $.get("https://tokens.coingecko.com/uniswap/all.json").then(_res=>{
+    //     return _res.tokens;
+    // })
 }
 _getEstimate=async function(){
 
     _fromToken=document.getElementById('fromToken').value;
     _toToken=document.getElementById('toToken').value;
+    // _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
     _amount=document.getElementById('amount').value;
-    _amountInWei=web3.toWei(_amount,'ether')
+    _decimalVal=18;
+    // for(i=0;i<_list.length;i++){
+    //     if(_tokenSymbol==_list[i].symbol){
+    //         _decimalVal=_list[i].decimals
+    //         break;
+    //     }
+    // }
+    _amountInWei=_amount*(10**(_decimalVal))
     
     _slippagePercentage=(document.getElementById('slippage_percent').value)/100//default=0.01%
     _taker=document.getElementById('toAddress').value;
 
     var chainId=await Promise.resolve(window.ethereum.request({'method':'eth_chainId'})).then(chainId=>{return chainId})
-    console.log(chainId)
+
     if(chainId=='0x5'){
     var url="https://goerli.api.0x.org/swap/v1/price?sellToken="+_fromToken+"&buyToken="+_toToken+"&sellAmount="+_amountInWei+"&slippagePercentage="+_slippagePercentage+"&takerAddress="+_taker
 
@@ -87,6 +99,7 @@ _getEstimate=async function(){
    else{
     console.log("change to testnet goerli.")
     alert('change to testnet goerli!!')
+    
    }
    
     
@@ -94,11 +107,20 @@ _getEstimate=async function(){
 
 _swapToken=async function(){
 
-    _fromToken=document.getElementById('fromToken').value;//
-    _toToken=document.getElementById('toToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
-    _amount=document.getElementById('amount').value;//in ether
-    _amountInWei=web3.toWei(_amount,'ether')  //in wei
+    _fromToken=document.getElementById('fromToken').value;//DAI
+    _toToken=document.getElementById('toToken').value;//WETH
+    // _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
     
+    _amount=document.getElementById('amount').value;//in ether    
+    _decimalVal=18;
+    // for(i=0;i<_list.length;i++){
+    //     if(_tokenSymbol==_list[i].symbol){
+    //         _decimalVal=_list[i].decimals
+    //         break;
+    //     }
+    // }
+    _amountInWei=_amount*(10**(_decimalVal))
+
     _slippagePercentage=(document.getElementById('slippage_percent').value)/100//default=0.01%
     _taker=document.getElementById('toAddress').value;
     
@@ -403,10 +425,9 @@ _swapApproval=async function(response){
 },
 
 _clear=function(){
-    document.getElementById('_fromToken').value=""
-    document.getElementById('_toToken').value=""
-    document.getElementById('fromToken').value=""
-    document.getElementById('toToken').value=""
+
+    document.getElementById('fromToken').value="select"
+    document.getElementById('toToken').value="select"
     document.getElementById('amount').value=""
     document.getElementById('expected_amount').value=""
     document.getElementById('slippage_percent').value="1"

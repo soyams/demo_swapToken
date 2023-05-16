@@ -34,7 +34,7 @@ App = {
         App.get_account();
     })
     App.get_account();
-    // return App.get_account();
+
   },
 
   get_account:function(){
@@ -74,9 +74,10 @@ App = {
       document.getElementById('testnet__toToken').style.display='none';
 
       var url="https://tokens.coingecko.com/uniswap/all.json"
-      $.get(url).then(res=>{
+      _list=await $.get(url).then(res=>{
         console.log(res.tokens)
         this._addList(res.tokens);
+        return res.tokens;
       })
     }
     else if(chainId=='0x5'){
@@ -86,6 +87,7 @@ App = {
       document.getElementById('testnet_div_toToken').style.display='block';
       document.getElementById('testnet__fromToken').style.display='none';
       document.getElementById('testnet__toToken').style.display='none';
+
     }
     else{
         document.getElementById('mainnet_div_fromToken').style.display='none';
@@ -150,10 +152,19 @@ App = {
         if(chainId=='0x1'){
             _fromToken=document.getElementById('selectFromToken').value
             _toToken=document.getElementById('selectToToken').value
+            _decimalVal=18;
+            for(i=0;i<_list.length;i++){
+                if(_fromToken==_list[i].symbol){
+                    _decimalVal=_list[i].decimals
+                    break;
+                }
+            }
         }
         else if(chainId=='0x5'){
-            _fromToken=document.getElementById('fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
-            _toToken=document.getElementById('toToken').value;//0x07865c6E87B9F70255377e024ace6630C1Eaa37F - USDC
+            _fromToken=document.getElementById('fromToken').value;// WETH
+            _toToken=document.getElementById('toToken').value;//DAI
+            // _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
+            _decimalVal=18;
         }
         else{
             _fromToken=document.getElementById('_fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
@@ -161,7 +172,7 @@ App = {
         }
         
         _amount=document.getElementById('amount').value;
-        _amountInWei=web3.toWei(_amount,'ether')
+        _amountInWei=_amount*(10**(_decimalVal))
 
         _slippagePercentage=(document.getElementById('slippage_percent').value)/100
         _taker=document.getElementById('toAddress').value;
@@ -233,10 +244,18 @@ App = {
         if(chainId=='0x1'){
             _fromToken=document.getElementById('selectFromToken').value
             _toToken=document.getElementById('selectToToken').value
+            for(i=0;i<_list.length;i++){
+                if(_fromToken==_list[i].symbol){
+                    _decimalVal=_list[i].decimals
+                    break;
+                }
+            }
         }
         else if(chainId=='0x5'){
-            _fromToken=document.getElementById('fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
-            _toToken=document.getElementById('toToken').value;//0x07865c6E87B9F70255377e024ace6630C1Eaa37F - USDC
+            _fromToken=document.getElementById('fromToken').value;// WETH
+            _toToken=document.getElementById('toToken').value;// USDC
+            // _tokenSymbol=document.getElementById('fromToken').options[document.getElementById('fromToken').selectedIndex].text
+            _decimalVal=18;
         }
         else{
             _fromToken=document.getElementById('_fromToken').value;//0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - WETH
@@ -244,7 +263,7 @@ App = {
         }
 
         _amount=document.getElementById('amount').value;
-        _amountInWei=web3.toWei(_amount,'ether')
+        _amountInWei=_amount*(10**(_decimalVal))
 
         _slippagePercentage=(document.getElementById('slippage_percent').value)/100//default=0.01%
         _taker=document.getElementById('toAddress').value;
@@ -529,14 +548,15 @@ App = {
     ];        
 
     const tokenContract= web3.eth.contract(erc20).at(_fromTokenAddress)
+
     try{
-        await tokenContract.approve(_allowanceTarget,_maxApproval,async (err,txId)=>{
+        await tokenContract.approve(_allowanceTarget,_maxApproval,async (err,txId)=>{//{from:_taker,gas:'15000000000'}
             console.log(txId)
             if(txId!=undefined && !err)
             {
-                // await web3.eth.getTransactionReceipt(txId,async (err,txReceipt)=>{
-                //     console.log(txReceipt)
-                //     if(txReceipt){
+                // await web3.eth.getTransactionReceipt(txId,async (err,txReceiptId)=>{
+                //     console.log(txReceiptId)})
+                //     if(txReceiptId){
                         await web3.eth.sendTransaction(response,{from:_taker,gas:'1000000000000000'},async(err,swapTxId)=>{ //gas:"0x40b28", gasPrice:"0x5f5e100"
                             console.log(swapTxId)
                             if(swapTxId!=undefined && !err){
@@ -556,6 +576,7 @@ App = {
                             }
                             
                         })
+                        
                 //     }
                 //     else{
                 //         console.log("tx receipt transaction reverted")
